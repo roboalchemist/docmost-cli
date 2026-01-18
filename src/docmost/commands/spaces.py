@@ -170,3 +170,33 @@ def remove_member(ctx: click.Context, space_id: str, user_id: str) -> None:
     except DocmostError as e:
         error(str(e))
         raise SystemExit(1)
+
+
+@spaces.command("members-change-role")
+@click.argument("space_id")
+@click.option("--user-id", "-u", help="User ID to change role for")
+@click.option("--group-id", "-g", help="Group ID to change role for")
+@click.option("--role", "-r", required=True, help="New role")
+@click.pass_context
+def change_member_role(
+    ctx: click.Context, space_id: str, user_id: str | None, group_id: str | None, role: str
+) -> None:
+    """Change a member's role in a space."""
+    if not user_id and not group_id:
+        error("Either --user-id or --group-id must be provided")
+        raise SystemExit(1)
+
+    try:
+        client = get_client(url=ctx.obj.url)
+        data: dict[str, str] = {"spaceId": space_id, "role": role}
+        if user_id:
+            data["userId"] = user_id
+        if group_id:
+            data["groupId"] = group_id
+        result = client.post("/spaces/members/change-role", data)
+        output(result, ctx.obj.format)
+        target = f"user '{user_id}'" if user_id else f"group '{group_id}'"
+        success(f"Changed role for {target} in space '{space_id}' to '{role}'")
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)

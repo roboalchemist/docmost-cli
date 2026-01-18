@@ -301,3 +301,66 @@ class TestSpacesMembersRemoveCommand:
         )
         assert result.exit_code == 1
         assert "User not in space" in result.output
+
+
+class TestSpacesMembersChangeRoleCommand:
+    """Tests for spaces members-change-role command."""
+
+    def test_change_role_for_user(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Change role for a user."""
+        httpx_mock.add_response(json={"success": True})
+
+        result = runner.invoke(
+            cli,
+            ["spaces", "members-change-role", "space-1", "--user-id", "user-1", "--role", "admin"],
+        )
+        assert result.exit_code == 0
+        assert "Changed role for user 'user-1'" in result.output
+        assert "to 'admin'" in result.output
+
+    def test_change_role_for_group(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Change role for a group."""
+        httpx_mock.add_response(json={"success": True})
+
+        result = runner.invoke(
+            cli,
+            ["spaces", "members-change-role", "space-1", "-g", "group-1", "-r", "editor"],
+        )
+        assert result.exit_code == 0
+        assert "Changed role for group 'group-1'" in result.output
+        assert "to 'editor'" in result.output
+
+    def test_change_role_requires_user_or_group(
+        self, runner: CliRunner, mock_auth
+    ) -> None:
+        """Change role requires --user-id or --group-id."""
+        result = runner.invoke(
+            cli, ["spaces", "members-change-role", "space-1", "--role", "admin"]
+        )
+        assert result.exit_code == 1
+        assert "Either --user-id or --group-id must be provided" in result.output
+
+    def test_change_role_requires_role(self, runner: CliRunner, mock_auth) -> None:
+        """Change role requires --role option."""
+        result = runner.invoke(
+            cli, ["spaces", "members-change-role", "space-1", "--user-id", "user-1"]
+        )
+        assert result.exit_code == 2
+        assert "Missing option" in result.output or "--role" in result.output
+
+    def test_change_role_error(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Change role handles API error."""
+        httpx_mock.add_response(status_code=400, json={"message": "Invalid role"})
+
+        result = runner.invoke(
+            cli,
+            ["spaces", "members-change-role", "space-1", "-u", "user-1", "-r", "invalid"],
+        )
+        assert result.exit_code == 1
+        assert "Invalid role" in result.output
