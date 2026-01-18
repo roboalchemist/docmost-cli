@@ -1,0 +1,1 @@
+# Docmost CLI tests
