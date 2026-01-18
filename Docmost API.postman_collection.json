@@ -1,0 +1,2045 @@
+{
+  "info": {
+    "_postman_id": "1b11f166-8c82-43f9-a632-f386f846fb52",
+    "name": "Docmost API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51599942",
+    "_collection_link": "https://go.postman.co/collection/34913580-1b11f166-8c82-43f9-a632-f386f846fb52?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "/auth/login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.vault.set('authorization-secret', jsonData.data.tokens.accessToken)"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept-Encoding",
+                "value": "gzip, deflate, br, zstd",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json, text/plain, */*",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{login}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/auth/login",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Space",
+      "item": [
+        {
+          "name": "/spaces",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://{{base_url}}/spaces",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/spaces/info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://{{base_url}}/spaces/info?spaceId",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces",
+                "info"
+              ],
+              "query": [
+                {
+                  "key": "spaceId",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/spaces/create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "slug",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "icon",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/spaces/create",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/spaces/update",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "description": "UUID",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "icon",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "slug",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/spaces/update",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/spaces/delete",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/spaces/delete",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/spaces/members",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/spaces/members",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces",
+                "members"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/spaces/members/add",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "userIds",
+                  "value": "",
+                  "description": "string[]",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "groupIds",
+                  "value": "",
+                  "description": "string[]",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/spaces/members/add",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces",
+                "members",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/spaces/members/remove",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": "string",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "groupId",
+                  "value": "",
+                  "description": "string",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/spaces/members/remove",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces",
+                "members",
+                "remove"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/spaces/members/change-role",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": "string",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "groupId",
+                  "value": "",
+                  "description": "string",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/spaces/members/change-role",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "spaces",
+                "members",
+                "change-role"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "/users/me",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://{{base_url}}/users/me",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/users/update",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "workspaceId",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "fullPageWidth",
+                  "value": "",
+                  "description": "Bool",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/users/update",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Workspace",
+      "item": [
+        {
+          "name": "/workspace/info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/info",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/public",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/public",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "public"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/members",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/members?query&page&limit",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "members"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "page",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/update",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "description",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "logo",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "hostname",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "defaultSpaceId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "customDomain",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "enableInvite",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "inviteCode",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "settings",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/update",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/members/change-role",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "userId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "role",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/members/change-role",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "members",
+                "change-role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/invites",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/invites?query&page&limit",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "invites"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "page",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/invites/create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "role",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "emails",
+                  "value": "",
+                  "description": "string[]",
+                  "type": "text"
+                },
+                {
+                  "key": "groupIds",
+                  "value": "",
+                  "description": "string[]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/invites/create",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "invites",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/invites/accept",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "invitationId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "description": "string[]",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "",
+                  "description": "string[]",
+                  "type": "text"
+                },
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/invites/accept",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "invites",
+                "accept"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/invites/resend",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "invitationId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/invites/resend",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "invites",
+                "resend"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/invites/revoke",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "invitationId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/invites/revoke",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "invites",
+                "revoke"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/workspace/invites/info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "invitationId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/workspace/invites/info",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspace",
+                "invites",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comment",
+      "item": [
+        {
+          "name": "/comments/create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "content",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "selection",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "creatorId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "parentCommentId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "workspaceId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "creator",
+                  "value": "IUser",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/comments/create",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/comments/resolve",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "commentId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "resolved",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/comments/resolve",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments",
+                "resolve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/comments/update",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "content",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/comments/update",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/comments/info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "commentId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/comments/info",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/comments/delete",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "commentId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/comments/delete",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/comments",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/comments",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Group",
+      "item": [
+        {
+          "name": "/groups",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://{{base_url}}/groups?query&page&limit",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "page",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/groups/info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "groupId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/groups/info",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/groups/create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "isDefault",
+                  "value": "",
+                  "description": "bool",
+                  "type": "text"
+                },
+                {
+                  "key": "creatorId",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "workspaceId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/groups/create",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/groups/update",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "groupId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "isDefault",
+                  "value": "",
+                  "description": "bool",
+                  "type": "text"
+                },
+                {
+                  "key": "creatorId",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "workspaceId",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/groups/update",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/groups/delete",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "groupId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/groups/delete",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/groups/members",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "groupId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/groups/members",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "members"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/groups/members/add",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "groupId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "userIds",
+                  "value": "",
+                  "description": "string[]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/groups/members/add",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "members",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/groups/members/remove",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "groupId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": "string",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/groups/members/remove",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "members",
+                "remove"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Page",
+      "item": [
+        {
+          "name": "/pages/create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "slugId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "content",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "icon",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "coverPhoto",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "parentPageId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "workspaceId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/create",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/info",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/update",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "parentPageId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "icon",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "coverPhoto",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "position",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/update",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/delete",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/delete",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/move",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "position",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "after",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "before",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "parentPageId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/move",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "move"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/sidebar-pages",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "description": "pagination",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/sidebar-pages",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "sidebar-pages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/breadcrumbs",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/breadcrumbs",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "breadcrumbs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/recent",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "spaceId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/recent",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "recent"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/export",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "format",
+                  "value": "",
+                  "description": "html/markdown",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/export",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "export"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/history",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pageId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/history",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "history"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/pages/history/info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "historyId",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://{{base_url}}/pages/history/info",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pages",
+                "history",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "/search",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://{{base_url}}/search?query&spaceId",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "spaceId",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/search/suggest",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://{{base_url}}/search/suggest?query&includeUsers&includeGroups",
+              "protocol": "https",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "search",
+                "suggest"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": null
+                },
+                {
+                  "key": "includeUsers",
+                  "value": null
+                },
+                {
+                  "key": "includeGroups",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{vault:authorization-secret}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
