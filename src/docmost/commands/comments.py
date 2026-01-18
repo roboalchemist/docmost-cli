@@ -12,6 +12,20 @@ def comments() -> None:
     pass
 
 
+@comments.command("info")
+@click.argument("comment_id")
+@click.pass_context
+def comment_info(ctx: click.Context, comment_id: str) -> None:
+    """Get comment information."""
+    try:
+        client = get_client(url=ctx.obj.url)
+        result = client.post("/comments/info", {"commentId": comment_id})
+        output(result, ctx.obj.format)
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)
+
+
 @comments.command("list")
 @click.argument("page_id")
 @click.option("--page", "-p", type=int, default=1, help="Page number")

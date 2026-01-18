@@ -23,6 +23,30 @@ def mock_auth(tmp_path):
             yield
 
 
+class TestCommentsInfoCommand:
+    """Tests for comments info command."""
+
+    def test_comment_info(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
+        """Get comment info."""
+        httpx_mock.add_response(
+            json={"id": "c-123", "content": "A comment", "creatorId": "u-1"}
+        )
+
+        result = runner.invoke(cli, ["comments", "info", "c-123"])
+        assert result.exit_code == 0
+        assert "A comment" in result.output
+
+    def test_comment_info_not_found(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Comment info handles not found."""
+        httpx_mock.add_response(status_code=404, json={"message": "Comment not found"})
+
+        result = runner.invoke(cli, ["comments", "info", "nonexistent"])
+        assert result.exit_code == 1
+        assert "Comment not found" in result.output
+
+
 class TestCommentsListCommand:
     """Tests for comments list command."""
 
