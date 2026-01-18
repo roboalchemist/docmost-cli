@@ -80,7 +80,11 @@ def workspace_members(ctx: click.Context, query: str | None, page: int, limit: i
         if query:
             data["query"] = query
         result = client.post("/workspace/members", data)
-        members = result.get("items", result.get("members", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            members = result
+        else:
+            members = result.get("items", result.get("members", result))
         if isinstance(members, list):
             output(members, ctx.obj.format, columns=["id", "name", "email", "role"])
         else:
@@ -120,7 +124,11 @@ def list_invites(ctx: click.Context, page: int, limit: int) -> None:
     try:
         client = get_client(url=ctx.obj.url)
         result = client.post("/workspace/invites", {"page": page, "limit": limit})
-        invitations = result.get("items", result.get("invitations", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            invitations = result
+        else:
+            invitations = result.get("items", result.get("invitations", result))
         if isinstance(invitations, list):
             output(invitations, ctx.obj.format, columns=["id", "email", "role", "createdAt"])
         else:

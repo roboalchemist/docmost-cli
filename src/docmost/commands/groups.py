@@ -25,7 +25,11 @@ def list_groups(ctx: click.Context, query: str | None, page: int, limit: int) ->
         if query:
             data["query"] = query
         result = client.post("/groups", data)
-        groups_data = result.get("items", result.get("groups", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            groups_data = result
+        else:
+            groups_data = result.get("items", result.get("groups", result))
         if isinstance(groups_data, list):
             output(
                 groups_data, ctx.obj.format, columns=["id", "name", "description", "memberCount"]
@@ -124,7 +128,11 @@ def group_members(ctx: click.Context, group_id: str, page: int, limit: int) -> N
     try:
         client = get_client(url=ctx.obj.url)
         result = client.post("/groups/members", {"groupId": group_id, "page": page, "limit": limit})
-        members = result.get("items", result.get("members", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            members = result
+        else:
+            members = result.get("items", result.get("members", result))
         if isinstance(members, list):
             output(members, ctx.obj.format, columns=["id", "name", "email"])
         else:

@@ -149,7 +149,11 @@ def page_tree(ctx: click.Context, space_id: str) -> None:
     try:
         client = get_client(url=ctx.obj.url)
         result = client.post("/pages/sidebar-pages", {"spaceId": space_id})
-        pages_data = result.get("items", result.get("pages", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            pages_data = result
+        else:
+            pages_data = result.get("items", result.get("pages", result))
         if isinstance(pages_data, list):
             output(pages_data, ctx.obj.format, columns=["id", "title", "icon", "parentPageId"])
         else:
@@ -172,7 +176,11 @@ def recent_pages(ctx: click.Context, space_id: str | None, page: int, limit: int
         if space_id:
             data["spaceId"] = space_id
         result = client.post("/pages/recent", data)
-        pages_data = result.get("items", result.get("pages", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            pages_data = result
+        else:
+            pages_data = result.get("items", result.get("pages", result))
         if isinstance(pages_data, list):
             output(pages_data, ctx.obj.format, columns=["id", "title", "spaceId", "updatedAt"])
         else:
@@ -225,7 +233,11 @@ def page_history(ctx: click.Context, page_id: str, page: int, limit: int) -> Non
     try:
         client = get_client(url=ctx.obj.url)
         result = client.post("/pages/history", {"pageId": page_id, "page": page, "limit": limit})
-        history = result.get("items", result.get("history", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            history = result
+        else:
+            history = result.get("items", result.get("history", result))
         if isinstance(history, list):
             output(history, ctx.obj.format, columns=["id", "version", "createdAt", "creatorId"])
         else:
@@ -243,7 +255,11 @@ def page_breadcrumbs(ctx: click.Context, page_id: str) -> None:
     try:
         client = get_client(url=ctx.obj.url)
         result = client.post("/pages/breadcrumbs", {"pageId": page_id})
-        breadcrumbs = result.get("items", result.get("breadcrumbs", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            breadcrumbs = result
+        else:
+            breadcrumbs = result.get("items", result.get("breadcrumbs", result))
         if isinstance(breadcrumbs, list):
             output(breadcrumbs, ctx.obj.format, columns=["id", "title", "icon"])
         else:

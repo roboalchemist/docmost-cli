@@ -21,7 +21,11 @@ def list_spaces(ctx: click.Context, page: int, limit: int) -> None:
     try:
         client = get_client(url=ctx.obj.url)
         result = client.post("/spaces", {"page": page, "limit": limit})
-        spaces_data = result.get("items", result.get("spaces", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            spaces_data = result
+        else:
+            spaces_data = result.get("items", result.get("spaces", result))
         if isinstance(spaces_data, list):
             output(spaces_data, ctx.obj.format, columns=["id", "name", "slug", "description"])
         else:
@@ -122,7 +126,11 @@ def space_members(ctx: click.Context, space_id: str, page: int, limit: int) -> N
     try:
         client = get_client(url=ctx.obj.url)
         result = client.post("/spaces/members", {"spaceId": space_id, "page": page, "limit": limit})
-        members = result.get("items", result.get("members", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            members = result
+        else:
+            members = result.get("items", result.get("members", result))
         if isinstance(members, list):
             output(members, ctx.obj.format, columns=["id", "name", "email", "role"])
         else:

@@ -36,7 +36,11 @@ def list_comments(ctx: click.Context, page_id: str, page: int, limit: int) -> No
     try:
         client = get_client(url=ctx.obj.url)
         result = client.post("/comments", {"pageId": page_id, "page": page, "limit": limit})
-        comments_data = result.get("items", result.get("comments", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            comments_data = result
+        else:
+            comments_data = result.get("items", result.get("comments", result))
         if isinstance(comments_data, list):
             output(
                 comments_data,
