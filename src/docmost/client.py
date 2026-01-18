@@ -98,12 +98,14 @@ class DocmostClient:
                 response=data,
             )
 
+        # Unwrap response: {"data": {...}, "success": true, "status": 200} -> {...}
+        if "data" in data and "success" in data and "status" in data:
+            return data["data"]
+
         return data
 
     def post(self, endpoint: str, data: dict[str, Any] | None = None) -> dict[str, Any]:
-        """Make a POST request to the API.
-
-        All Docmost API endpoints use POST with urlencoded body.
+        """Make a POST request to the API with JSON body.
 
         Args:
             endpoint: API endpoint (e.g., "/spaces/list")
@@ -114,11 +116,14 @@ class DocmostClient:
         """
         url = f"{self.url.rstrip('/')}{endpoint}"
 
+        headers = self._get_headers()
+        headers["Content-Type"] = "application/json"
+
         with httpx.Client(timeout=self.timeout) as client:
             response = client.post(
                 url,
-                data=data or {},
-                headers=self._get_headers(),
+                json=data or {},
+                headers=headers,
             )
             return self._handle_response(response)
 

@@ -53,8 +53,8 @@ class TestSpacesListCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"page=2" in request.content
-        assert b"limit=10" in request.content
+        assert b'"page":2' in request.content
+        assert b'"limit":10' in request.content
 
     def test_list_spaces_handles_spaces_key(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -136,7 +136,7 @@ class TestSpacesCreateCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"description=A+test+space" in request.content
+        assert b'"description":"A test space"' in request.content
 
     def test_create_space_error(
         self, runner: CliRunner, httpx_mock, mock_auth

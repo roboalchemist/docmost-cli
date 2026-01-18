@@ -76,7 +76,7 @@ class TestUsersUpdateCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"email=newemail%40example.com" in request.content
+        assert b'"email":"newemail@example.com"' in request.content
 
     def test_update_user_role(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
         """Update user role."""

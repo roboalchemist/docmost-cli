@@ -40,8 +40,22 @@ def login(url: str, email: str, password: str) -> None:
                 error(f"Login failed: {response.text}")
                 raise SystemExit(1)
 
-            data = response.json()
-            token = data.get("token") or data.get("accessToken") or data.get("access_token")
+            # Token is returned in Set-Cookie header as authToken
+            token = None
+            auth_cookie = response.cookies.get("authToken")
+            if auth_cookie:
+                token = auth_cookie
+
+            # Fallback: check response body (various formats)
+            if not token:
+                data = response.json()
+                # Handle nested response: data.tokens.accessToken
+                if "data" in data and isinstance(data["data"], dict):
+                    tokens = data["data"].get("tokens", {})
+                    token = tokens.get("accessToken") or tokens.get("access_token")
+                # Fallback to top-level keys
+                if not token:
+                    token = data.get("token") or data.get("accessToken") or data.get("access_token")
 
             if not token:
                 error("No token received from server")

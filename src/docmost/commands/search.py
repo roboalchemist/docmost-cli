@@ -20,7 +20,11 @@ def search(ctx: click.Context, query: str, space_id: str | None, page: int, limi
         if space_id:
             data["spaceId"] = space_id
         result = client.post("/search", data)
-        results = result.get("items", result.get("results", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            results = result
+        else:
+            results = result.get("items", result.get("results", result))
         if isinstance(results, list):
             output(results, ctx.obj.format, columns=["id", "title", "spaceId", "highlight"])
         else:
@@ -49,7 +53,11 @@ def suggest(ctx: click.Context, query: str, include_users: bool, include_groups:
         if include_groups:
             data["includeGroups"] = True
         result = client.post("/search/suggest", data)
-        suggestions = result.get("items", result.get("suggestions", result))
+        # Handle both list and dict responses
+        if isinstance(result, list):
+            suggestions = result
+        else:
+            suggestions = result.get("items", result.get("suggestions", result))
         if isinstance(suggestions, list):
             output(suggestions, ctx.obj.format, columns=["id", "title", "type"])
         else:

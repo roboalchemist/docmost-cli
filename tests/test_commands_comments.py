@@ -152,7 +152,7 @@ class TestCommentsCreateCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"parentCommentId=parent-comment-id" in request.content
+        assert b'"parentCommentId":"parent-comment-id"' in request.content
 
     def test_create_comment_error(
         self, runner: CliRunner, httpx_mock, mock_auth

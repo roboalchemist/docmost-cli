@@ -68,9 +68,10 @@ class TestDocmostClientHeaders:
 
     def test_get_headers_without_token(self) -> None:
         """Headers omit Authorization when no token."""
-        client = DocmostClient(url="https://example.com/api", token=None)
-        headers = client._get_headers()
-        assert "Authorization" not in headers
+        with patch("docmost.client.get_token", return_value=None):
+            client = DocmostClient(url="https://example.com/api", token=None)
+            headers = client._get_headers()
+            assert "Authorization" not in headers
 
 
 class TestDocmostClientHandleResponse:
@@ -138,8 +139,8 @@ class TestDocmostClientHandleResponse:
 class TestDocmostClientPost:
     """Tests for POST requests."""
 
-    def test_post_sends_urlencoded_data(self, httpx_mock) -> None:
-        """POST request sends data as urlencoded."""
+    def test_post_sends_json_data(self, httpx_mock) -> None:
+        """POST request sends data as JSON."""
         httpx_mock.add_response(json={"result": "success"})
         client = DocmostClient(url="https://example.com/api", token="token")
         result = client.post("/test", {"key": "value"})
@@ -148,7 +149,7 @@ class TestDocmostClientPost:
         request = httpx_mock.get_request()
         assert request.url == "https://example.com/api/test"
         assert request.method == "POST"
-        assert request.headers["Content-Type"] == "application/x-www-form-urlencoded"
+        assert request.headers["Content-Type"] == "application/json"
 
     def test_post_handles_trailing_slash(self, httpx_mock) -> None:
         """URL trailing slash is handled correctly."""

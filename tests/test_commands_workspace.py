@@ -143,7 +143,7 @@ class TestWorkspaceMembersCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"query=alice" in request.content
+        assert b'"query":"alice"' in request.content
 
     def test_list_workspace_members_pagination(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -491,10 +491,10 @@ class TestWorkspaceInvitesAcceptCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"invitationId=inv-789" in request.content
-        assert b"name=Test+User" in request.content
-        assert b"password=testpass" in request.content
-        assert b"token=invtoken" in request.content
+        assert b'"invitationId":"inv-789"' in request.content
+        assert b'"name":"Test User"' in request.content
+        assert b'"password":"testpass"' in request.content
+        assert b'"token":"invtoken"' in request.content
 
     def test_accept_invite_no_auth_header(
         self, runner: CliRunner, httpx_mock, mock_auth

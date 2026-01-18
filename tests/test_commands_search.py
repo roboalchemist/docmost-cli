@@ -51,7 +51,7 @@ class TestSearchCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"spaceId=space-1" in request.content
+        assert b'"spaceId":"space-1"' in request.content
 
     def test_search_pagination(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -63,8 +63,8 @@ class TestSearchCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"page=2" in request.content
-        assert b"limit=10" in request.content
+        assert b'"page":2' in request.content
+        assert b'"limit":10' in request.content
 
     def test_search_handles_results_key(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -129,7 +129,7 @@ class TestSuggestCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"includeUsers=true" in request.content
+        assert b'"includeUsers":true' in request.content
 
     def test_suggest_include_groups(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -141,7 +141,7 @@ class TestSuggestCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"includeGroups=true" in request.content
+        assert b'"includeGroups":true' in request.content
 
     def test_suggest_include_both(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -153,8 +153,8 @@ class TestSuggestCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"includeUsers=true" in request.content
-        assert b"includeGroups=true" in request.content
+        assert b'"includeUsers":true' in request.content
+        assert b'"includeGroups":true' in request.content
 
     def test_suggest_handles_suggestions_key(
         self, runner: CliRunner, httpx_mock, mock_auth

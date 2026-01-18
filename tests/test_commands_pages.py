@@ -70,7 +70,7 @@ class TestPagesCreateCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"parentPageId=parent-123" in request.content
+        assert b'"parentPageId":"parent-123"' in request.content
 
     def test_create_page_error(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -270,7 +270,7 @@ class TestPagesRecentCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"spaceId=space-1" in request.content
+        assert b'"spaceId":"space-1"' in request.content
 
     def test_recent_pages_pagination(
         self, runner: CliRunner, httpx_mock, mock_auth

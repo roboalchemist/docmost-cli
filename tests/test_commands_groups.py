@@ -51,7 +51,7 @@ class TestGroupsListCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"query=eng" in request.content
+        assert b'"query":"eng"' in request.content
 
     def test_list_groups_pagination(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -121,7 +121,7 @@ class TestGroupsCreateCommand:
         assert result.exit_code == 0
 
         request = httpx_mock.get_request()
-        assert b"description=Group+description" in request.content
+        assert b'"description":"Group description"' in request.content
 
     def test_create_group_error(
         self, runner: CliRunner, httpx_mock, mock_auth
