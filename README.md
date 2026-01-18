@@ -257,6 +257,8 @@ docmost workspace invites create --emails "user1@example.com,user2@example.com" 
 docmost workspace invites revoke INVITATION_ID
 docmost workspace invites info INVITATION_ID
 docmost workspace invites resend INVITATION_ID
+docmost workspace invites accept INVITATION_ID --name "John Doe" --token abc123
+# Password will be prompted securely
 ```
 
 ### Groups
