@@ -25,6 +25,19 @@ def workspace_info(ctx: click.Context) -> None:
         raise SystemExit(1)
 
 
+@workspace.command("public")
+@click.pass_context
+def workspace_public(ctx: click.Context) -> None:
+    """Get public workspace information."""
+    try:
+        client = get_client(url=ctx.obj.url)
+        result = client.post("/workspace/public", {})
+        output(result, ctx.obj.format)
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)
+
+
 @workspace.command("update")
 @click.option("--name", "-n", help="New workspace name")
 @click.option("--description", "-d", help="New workspace description")
@@ -72,6 +85,21 @@ def workspace_members(ctx: click.Context, query: str | None, page: int, limit: i
             output(members, ctx.obj.format, columns=["id", "name", "email", "role"])
         else:
             output(result, ctx.obj.format)
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)
+
+
+@workspace.command("members-change-role")
+@click.argument("user_id")
+@click.option("--role", "-r", required=True, help="New role for the user")
+@click.pass_context
+def members_change_role(ctx: click.Context, user_id: str, role: str) -> None:
+    """Change a workspace member's role."""
+    try:
+        client = get_client(url=ctx.obj.url)
+        client.post("/workspace/members/change-role", {"userId": user_id, "role": role})
+        success(f"Changed role for user '{user_id}' to '{role}'")
     except DocmostError as e:
         error(str(e))
         raise SystemExit(1)
@@ -134,6 +162,34 @@ def revoke_invite(ctx: click.Context, invitation_id: str) -> None:
         client = get_client(url=ctx.obj.url)
         client.post("/workspace/invites/revoke", {"invitationId": invitation_id})
         success(f"Invitation '{invitation_id}' revoked")
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)
+
+
+@invites.command("resend")
+@click.argument("invitation_id")
+@click.pass_context
+def resend_invite(ctx: click.Context, invitation_id: str) -> None:
+    """Resend a pending invitation."""
+    try:
+        client = get_client(url=ctx.obj.url)
+        client.post("/workspace/invites/resend", {"invitationId": invitation_id})
+        success(f"Invitation '{invitation_id}' resent")
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)
+
+
+@invites.command("info")
+@click.argument("invitation_id")
+@click.pass_context
+def invite_info(ctx: click.Context, invitation_id: str) -> None:
+    """Get invitation details."""
+    try:
+        client = get_client(url=ctx.obj.url)
+        result = client.post("/workspace/invites/info", {"invitationId": invitation_id})
+        output(result, ctx.obj.format)
     except DocmostError as e:
         error(str(e))
         raise SystemExit(1)

@@ -50,6 +50,33 @@ class TestWorkspaceInfoCommand:
         assert result.exit_code == 1
 
 
+class TestWorkspacePublicCommand:
+    """Tests for workspace public command."""
+
+    def test_workspace_public(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
+        """Get public workspace info."""
+        httpx_mock.add_response(
+            json={
+                "id": "ws-123",
+                "name": "Public Workspace",
+                "isPublic": True,
+            }
+        )
+
+        result = runner.invoke(cli, ["workspace", "public"])
+        assert result.exit_code == 0
+        assert "Public Workspace" in result.output
+
+    def test_workspace_public_error(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Workspace public handles error."""
+        httpx_mock.add_response(status_code=500, json={"message": "Server error"})
+
+        result = runner.invoke(cli, ["workspace", "public"])
+        assert result.exit_code == 1
+
+
 class TestWorkspaceUpdateCommand:
     """Tests for workspace update command."""
 
@@ -137,6 +164,54 @@ class TestWorkspaceMembersCommand:
 
         result = runner.invoke(cli, ["workspace", "members"])
         assert result.exit_code == 0
+
+
+class TestWorkspaceMembersChangeRoleCommand:
+    """Tests for workspace members-change-role command."""
+
+    def test_change_member_role(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Change member role."""
+        httpx_mock.add_response(json={})
+
+        result = runner.invoke(
+            cli, ["workspace", "members-change-role", "user-123", "--role", "admin"]
+        )
+        assert result.exit_code == 0
+        assert "Changed role for user 'user-123' to 'admin'" in result.output
+
+    def test_change_member_role_short_option(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Change member role with short option."""
+        httpx_mock.add_response(json={})
+
+        result = runner.invoke(
+            cli, ["workspace", "members-change-role", "user-456", "-r", "member"]
+        )
+        assert result.exit_code == 0
+        assert "Changed role for user 'user-456' to 'member'" in result.output
+
+    def test_change_member_role_error(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Change member role handles error."""
+        httpx_mock.add_response(status_code=404, json={"message": "User not found"})
+
+        result = runner.invoke(
+            cli, ["workspace", "members-change-role", "invalid-user", "--role", "admin"]
+        )
+        assert result.exit_code == 1
+        assert "User not found" in result.output
+
+    def test_change_member_role_missing_role(
+        self, runner: CliRunner, mock_auth
+    ) -> None:
+        """Change member role requires --role option."""
+        result = runner.invoke(cli, ["workspace", "members-change-role", "user-123"])
+        assert result.exit_code == 2
+        assert "Missing option" in result.output or "--role" in result.output
 
 
 class TestWorkspaceInvitesListCommand:
@@ -247,3 +322,73 @@ class TestWorkspaceInvitesRevokeCommand:
         result = runner.invoke(cli, ["workspace", "invites", "revoke", "nonexistent"])
         assert result.exit_code == 1
         assert "Invitation not found" in result.output
+
+
+class TestWorkspaceInvitesResendCommand:
+    """Tests for workspace invites resend command."""
+
+    def test_resend_invite(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
+        """Resend pending invitation."""
+        httpx_mock.add_response(json={})
+
+        result = runner.invoke(cli, ["workspace", "invites", "resend", "inv-123"])
+        assert result.exit_code == 0
+        assert "Invitation 'inv-123' resent" in result.output
+
+    def test_resend_invite_not_found(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Resend invite handles not found."""
+        httpx_mock.add_response(status_code=404, json={"message": "Invitation not found"})
+
+        result = runner.invoke(cli, ["workspace", "invites", "resend", "nonexistent"])
+        assert result.exit_code == 1
+        assert "Invitation not found" in result.output
+
+    def test_resend_invite_error(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Resend invite handles server error."""
+        httpx_mock.add_response(status_code=500, json={"message": "Server error"})
+
+        result = runner.invoke(cli, ["workspace", "invites", "resend", "inv-123"])
+        assert result.exit_code == 1
+
+
+class TestWorkspaceInvitesInfoCommand:
+    """Tests for workspace invites info command."""
+
+    def test_invite_info(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
+        """Get invitation info."""
+        httpx_mock.add_response(
+            json={
+                "id": "inv-123",
+                "email": "user@example.com",
+                "role": "member",
+                "status": "pending",
+                "createdAt": "2026-01-15T00:00:00Z",
+            }
+        )
+
+        result = runner.invoke(cli, ["workspace", "invites", "info", "inv-123"])
+        assert result.exit_code == 0
+        assert "user@example.com" in result.output
+
+    def test_invite_info_not_found(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Get invite info handles not found."""
+        httpx_mock.add_response(status_code=404, json={"message": "Invitation not found"})
+
+        result = runner.invoke(cli, ["workspace", "invites", "info", "nonexistent"])
+        assert result.exit_code == 1
+        assert "Invitation not found" in result.output
+
+    def test_invite_info_error(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Get invite info handles server error."""
+        httpx_mock.add_response(status_code=500, json={"message": "Server error"})
+
+        result = runner.invoke(cli, ["workspace", "invites", "info", "inv-123"])
+        assert result.exit_code == 1
