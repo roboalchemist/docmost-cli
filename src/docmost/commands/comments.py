@@ -21,7 +21,7 @@ def list_comments(ctx: click.Context, page_id: str, page: int, limit: int) -> No
     """List comments on a page."""
     try:
         client = get_client(url=ctx.obj.url)
-        result = client.post("/comments/list", {"pageId": page_id, "page": page, "limit": limit})
+        result = client.post("/comments", {"pageId": page_id, "page": page, "limit": limit})
         comments_data = result.get("items", result.get("comments", result))
         if isinstance(comments_data, list):
             output(
@@ -73,7 +73,7 @@ def update_comment(ctx: click.Context, comment_id: str, content: str) -> None:
     """Update a comment."""
     try:
         client = get_client(url=ctx.obj.url)
-        result = client.post("/comments/update", {"commentId": comment_id, "content": content})
+        result = client.post("/comments/update", {"id": comment_id, "content": content})
         output(result, ctx.obj.format)
         success("Comment updated")
     except DocmostError as e:

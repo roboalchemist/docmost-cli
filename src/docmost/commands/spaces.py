@@ -20,7 +20,7 @@ def list_spaces(ctx: click.Context, page: int, limit: int) -> None:
     """List all spaces."""
     try:
         client = get_client(url=ctx.obj.url)
-        result = client.post("/spaces/list", {"page": page, "limit": limit})
+        result = client.post("/spaces", {"page": page, "limit": limit})
         spaces_data = result.get("items", result.get("spaces", result))
         if isinstance(spaces_data, list):
             output(spaces_data, ctx.obj.format, columns=["id", "name", "slug", "description"])

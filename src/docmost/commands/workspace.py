@@ -91,7 +91,7 @@ def list_invites(ctx: click.Context, page: int, limit: int) -> None:
     """List pending invitations."""
     try:
         client = get_client(url=ctx.obj.url)
-        result = client.post("/workspace/invitations/list", {"page": page, "limit": limit})
+        result = client.post("/workspace/invites", {"page": page, "limit": limit})
         invitations = result.get("items", result.get("invitations", result))
         if isinstance(invitations, list):
             output(invitations, ctx.obj.format, columns=["id", "email", "role", "createdAt"])
@@ -112,7 +112,7 @@ def create_invite(ctx: click.Context, emails: str, role: str) -> None:
         client = get_client(url=ctx.obj.url)
         email_list = [e.strip() for e in emails.split(",")]
         result = client.post(
-            "/workspace/invitations/create",
+            "/workspace/invites/create",
             {
                 "emails": email_list,
                 "role": role,
@@ -132,7 +132,7 @@ def revoke_invite(ctx: click.Context, invitation_id: str) -> None:
     """Revoke a pending invitation."""
     try:
         client = get_client(url=ctx.obj.url)
-        client.post("/workspace/invitations/revoke", {"invitationId": invitation_id})
+        client.post("/workspace/invites/revoke", {"invitationId": invitation_id})
         success(f"Invitation '{invitation_id}' revoked")
     except DocmostError as e:
         error(str(e))

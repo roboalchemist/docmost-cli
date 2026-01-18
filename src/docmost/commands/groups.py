@@ -24,7 +24,7 @@ def list_groups(ctx: click.Context, query: str | None, page: int, limit: int) ->
         data: dict[str, str | int] = {"page": page, "limit": limit}
         if query:
             data["query"] = query
-        result = client.post("/groups/list", data)
+        result = client.post("/groups", data)
         groups_data = result.get("items", result.get("groups", result))
         if isinstance(groups_data, list):
             output(

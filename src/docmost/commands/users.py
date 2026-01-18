@@ -41,7 +41,7 @@ def update_user(
     """Update a user."""
     try:
         client = get_client(url=ctx.obj.url)
-        data: dict[str, str] = {"userId": user_id}
+        data: dict[str, str] = {"id": user_id}
         if name:
             data["name"] = name
         if email:
