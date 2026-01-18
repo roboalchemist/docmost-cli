@@ -9,7 +9,12 @@ from docmost.output import error, success
 
 
 @click.command()
-@click.option("--url", "-u", prompt="Docmost URL", help="Docmost instance URL (e.g., https://docs.example.com)")
+@click.option(
+    "--url",
+    "-u",
+    prompt="Docmost URL",
+    help="Docmost instance URL (e.g., https://docs.example.com)",
+)
 @click.option("--email", "-e", prompt="Email", help="Your email address")
 @click.option("--password", "-p", prompt="Password", hide_input=True, help="Your password")
 def login(url: str, email: str, password: str) -> None:

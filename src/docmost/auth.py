@@ -1,7 +1,6 @@
 """Authentication and token management for Docmost CLI."""
 
 import os
-from pathlib import Path
 
 from docmost.config import get_config_dir
 

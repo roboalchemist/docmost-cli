@@ -10,7 +10,9 @@ from docmost.config import load_config
 class Context:
     """CLI context object for passing configuration."""
 
-    def __init__(self, url: str | None = None, fmt: str | None = None, config_file: str | None = None):
+    def __init__(
+        self, url: str | None = None, fmt: str | None = None, config_file: str | None = None
+    ):
         self.config = load_config()
 
         # Override with CLI options
@@ -29,9 +31,7 @@ pass_context = click.make_pass_decorator(Context, ensure=True)
 @click.group()
 @click.option("--url", "-u", envvar="DOCMOST_URL", help="Docmost API URL")
 @click.option(
-    "--format", "-f", "fmt",
-    type=click.Choice(["json", "table", "plain"]),
-    help="Output format"
+    "--format", "-f", "fmt", type=click.Choice(["json", "table", "plain"]), help="Output format"
 )
 @click.option("--config", "-c", "config_file", type=click.Path(), help="Config file path")
 @click.version_option(version=__version__, prog_name="docmost")

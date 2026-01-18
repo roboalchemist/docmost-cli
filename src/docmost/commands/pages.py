@@ -185,14 +185,18 @@ def recent_pages(ctx: click.Context, space_id: str | None, page: int, limit: int
 @pages.command("export")
 @click.argument("page_id")
 @click.option(
-    "--format", "-f", "export_format",
+    "--format",
+    "-f",
+    "export_format",
     type=click.Choice(["html", "markdown"]),
     default="markdown",
-    help="Export format"
+    help="Export format",
 )
 @click.option("--output", "-o", type=click.Path(), help="Output file path")
 @click.pass_context
-def export_page(ctx: click.Context, page_id: str, export_format: str, output_path: str | None) -> None:
+def export_page(
+    ctx: click.Context, page_id: str, export_format: str, output_path: str | None
+) -> None:
     """Export a page to HTML or Markdown."""
     try:
         client = get_client(url=ctx.obj.url)

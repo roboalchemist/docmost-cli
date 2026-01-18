@@ -142,11 +142,14 @@ def add_members(ctx: click.Context, space_id: str, user_ids: str, role: str) -> 
     try:
         client = get_client(url=ctx.obj.url)
         ids = [uid.strip() for uid in user_ids.split(",")]
-        result = client.post("/spaces/members/add", {
-            "spaceId": space_id,
-            "userIds": ids,
-            "role": role,
-        })
+        result = client.post(
+            "/spaces/members/add",
+            {
+                "spaceId": space_id,
+                "userIds": ids,
+                "role": role,
+            },
+        )
         output(result, ctx.obj.format)
         success(f"Added {len(ids)} member(s) to space '{space_id}'")
     except DocmostError as e:

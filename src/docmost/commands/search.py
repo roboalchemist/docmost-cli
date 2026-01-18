@@ -32,8 +32,12 @@ def search(ctx: click.Context, query: str, space_id: str | None, page: int, limi
 
 @click.command("suggest")
 @click.argument("query")
-@click.option("--include-users/--no-include-users", "-u", default=False, help="Include users in results")
-@click.option("--include-groups/--no-include-groups", "-g", default=False, help="Include groups in results")
+@click.option(
+    "--include-users/--no-include-users", "-u", default=False, help="Include users in results"
+)
+@click.option(
+    "--include-groups/--no-include-groups", "-g", default=False, help="Include groups in results"
+)
 @click.pass_context
 def suggest(ctx: click.Context, query: str, include_users: bool, include_groups: bool) -> None:
     """Get search suggestions (autocomplete)."""

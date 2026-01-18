@@ -10,10 +10,10 @@ help:
 	@echo "  clean        Remove build artifacts"
 
 install:
-	uv pip install -e .
+	uv pip install --system -e .
 
 install-dev:
-	uv pip install -e ".[dev]"
+	uv pip install --system -e ".[dev]"
 
 test:
 	pytest -v

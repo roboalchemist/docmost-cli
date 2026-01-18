@@ -24,7 +24,11 @@ def list_comments(ctx: click.Context, page_id: str, page: int, limit: int) -> No
         result = client.post("/comments/list", {"pageId": page_id, "page": page, "limit": limit})
         comments_data = result.get("items", result.get("comments", result))
         if isinstance(comments_data, list):
-            output(comments_data, ctx.obj.format, columns=["id", "content", "creatorId", "resolved", "createdAt"])
+            output(
+                comments_data,
+                ctx.obj.format,
+                columns=["id", "content", "creatorId", "resolved", "createdAt"],
+            )
         else:
             output(result, ctx.obj.format)
     except DocmostError as e:
@@ -80,19 +84,20 @@ def update_comment(ctx: click.Context, comment_id: str, content: str) -> None:
 @comments.command("resolve")
 @click.argument("comment_id")
 @click.option(
-    "--resolved/--unresolved", "-r/-u",
-    default=True,
-    help="Set resolved status (default: resolved)"
+    "--resolved/--unresolved", "-r/-u", default=True, help="Set resolved status (default: resolved)"
 )
 @click.pass_context
 def resolve_comment(ctx: click.Context, comment_id: str, resolved: bool) -> None:
     """Resolve or unresolve a comment."""
     try:
         client = get_client(url=ctx.obj.url)
-        result = client.post("/comments/resolve", {
-            "commentId": comment_id,
-            "resolved": str(resolved).lower(),
-        })
+        result = client.post(
+            "/comments/resolve",
+            {
+                "commentId": comment_id,
+                "resolved": str(resolved).lower(),
+            },
+        )
         output(result, ctx.obj.format)
         status = "resolved" if resolved else "unresolved"
         success(f"Comment {status}")

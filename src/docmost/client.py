@@ -5,7 +5,7 @@ from typing import Any
 import httpx
 
 from docmost.auth import get_token
-from docmost.config import get_url, load_config
+from docmost.config import get_url
 
 
 class DocmostError(Exception):
@@ -19,16 +19,19 @@ class DocmostError(Exception):
 
 class AuthenticationError(DocmostError):
     """Raised when authentication fails."""
+
     pass
 
 
 class NotFoundError(DocmostError):
     """Raised when a resource is not found."""
+
     pass
 
 
 class ValidationError(DocmostError):
     """Raised when request validation fails."""
+
     pass
 
 
@@ -48,9 +51,7 @@ class DocmostClient:
         self.timeout = timeout
 
         if not self.url:
-            raise DocmostError(
-                "No API URL configured. Set DOCMOST_URL or run 'docmost login'."
-            )
+            raise DocmostError("No API URL configured. Set DOCMOST_URL or run 'docmost login'.")
 
     def _get_headers(self) -> dict[str, str]:
         """Get request headers with authentication."""

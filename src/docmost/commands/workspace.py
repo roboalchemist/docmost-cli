@@ -111,10 +111,13 @@ def create_invite(ctx: click.Context, emails: str, role: str) -> None:
     try:
         client = get_client(url=ctx.obj.url)
         email_list = [e.strip() for e in emails.split(",")]
-        result = client.post("/workspace/invitations/create", {
-            "emails": email_list,
-            "role": role,
-        })
+        result = client.post(
+            "/workspace/invitations/create",
+            {
+                "emails": email_list,
+                "role": role,
+            },
+        )
         output(result, ctx.obj.format)
         success(f"Invited {len(email_list)} user(s)")
     except DocmostError as e:

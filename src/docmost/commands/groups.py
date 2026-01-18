@@ -27,7 +27,9 @@ def list_groups(ctx: click.Context, query: str | None, page: int, limit: int) ->
         result = client.post("/groups/list", data)
         groups_data = result.get("items", result.get("groups", result))
         if isinstance(groups_data, list):
-            output(groups_data, ctx.obj.format, columns=["id", "name", "description", "memberCount"])
+            output(
+                groups_data, ctx.obj.format, columns=["id", "name", "description", "memberCount"]
+            )
         else:
             output(result, ctx.obj.format)
     except DocmostError as e:
@@ -73,7 +75,9 @@ def create_group(ctx: click.Context, name: str, description: str | None) -> None
 @click.option("--name", "-n", help="New group name")
 @click.option("--description", "-d", help="New group description")
 @click.pass_context
-def update_group(ctx: click.Context, group_id: str, name: str | None, description: str | None) -> None:
+def update_group(
+    ctx: click.Context, group_id: str, name: str | None, description: str | None
+) -> None:
     """Update a group."""
     try:
         client = get_client(url=ctx.obj.url)
@@ -139,10 +143,13 @@ def add_members(ctx: click.Context, group_id: str, user_ids: str) -> None:
     try:
         client = get_client(url=ctx.obj.url)
         ids = [uid.strip() for uid in user_ids.split(",")]
-        result = client.post("/groups/members/add", {
-            "groupId": group_id,
-            "userIds": ids,
-        })
+        result = client.post(
+            "/groups/members/add",
+            {
+                "groupId": group_id,
+                "userIds": ids,
+            },
+        )
         output(result, ctx.obj.format)
         success(f"Added {len(ids)} member(s) to group '{group_id}'")
     except DocmostError as e:
