@@ -110,9 +110,39 @@ def delete_page(ctx: click.Context, page_id: str, force: bool) -> None:
         raise SystemExit(1)
 
 
+def generate_position(index: int = 0) -> str:
+    """Generate a valid position string (5-12 chars) for page ordering.
+
+    Uses a simple base62 encoding approach to generate unique positions.
+    """
+    import time
+    import random
+
+    # Base62 alphabet (same as fractional-indexing uses)
+    alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+    # Generate a position based on timestamp + index + random
+    # This ensures unique positions that sort correctly
+    ts = int(time.time() * 1000) % (62 ** 4)  # Use last ~4 chars worth of timestamp
+    val = ts * 1000 + index * 10 + random.randint(0, 9)
+
+    # Convert to base62
+    result = []
+    while val > 0:
+        result.append(alphabet[val % 62])
+        val //= 62
+
+    # Pad to minimum 5 chars, prefix with 'a' to sort after existing
+    pos = "a" + "".join(reversed(result)).zfill(5)
+
+    # Ensure max 12 chars
+    return pos[:12]
+
+
 @pages.command("move")
 @click.argument("page_id")
 @click.option("--parent-id", "-p", help="New parent page ID (empty for root)")
+@click.option("--position", help="Position string (5-12 chars, auto-generated if not specified)")
 @click.option("--after", help="Place after this page ID")
 @click.option("--before", help="Place before this page ID")
 @click.pass_context
@@ -120,6 +150,7 @@ def move_page(
     ctx: click.Context,
     page_id: str,
     parent_id: str | None,
+    position: str | None,
     after: str | None,
     before: str | None,
 ) -> None:
@@ -127,6 +158,13 @@ def move_page(
     try:
         client = get_client(url=ctx.obj.url)
         data: dict[str, str | None] = {"pageId": page_id}
+
+        # Position is required by the API - generate one if not provided
+        if position:
+            data["position"] = position
+        else:
+            data["position"] = generate_position()
+
         if parent_id is not None:
             data["parentPageId"] = parent_id if parent_id else None
         if after:
