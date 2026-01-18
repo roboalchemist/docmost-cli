@@ -193,3 +193,42 @@ def invite_info(ctx: click.Context, invitation_id: str) -> None:
     except DocmostError as e:
         error(str(e))
         raise SystemExit(1)
+
+
+@invites.command("accept")
+@click.argument("invitation_id")
+@click.option("--name", "-n", required=True, help="Your display name")
+@click.option(
+    "--password",
+    "-p",
+    prompt=True,
+    hide_input=True,
+    confirmation_prompt=True,
+    help="Your password (will be prompted securely)",
+)
+@click.option("--token", "-t", required=True, help="Invitation token from the invitation link")
+@click.pass_context
+def accept_invite(
+    ctx: click.Context, invitation_id: str, name: str, password: str, token: str
+) -> None:
+    """Accept a workspace invitation.
+
+    This command is for new users accepting an invitation to join a workspace.
+    No authentication is required - only the invitation token.
+    """
+    try:
+        # Create client without authentication (public endpoint)
+        client = get_client(url=ctx.obj.url, token="")
+        client.post(
+            "/workspace/invites/accept",
+            {
+                "invitationId": invitation_id,
+                "name": name,
+                "password": password,
+                "token": token,
+            },
+        )
+        success(f"Invitation accepted. Welcome, {name}!")
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)

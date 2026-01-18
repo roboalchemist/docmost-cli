@@ -392,3 +392,243 @@ class TestWorkspaceInvitesInfoCommand:
 
         result = runner.invoke(cli, ["workspace", "invites", "info", "inv-123"])
         assert result.exit_code == 1
+
+
+class TestWorkspaceInvitesAcceptCommand:
+    """Tests for workspace invites accept command."""
+
+    def test_accept_invite(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
+        """Accept workspace invitation."""
+        httpx_mock.add_response(json={"success": True})
+
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-123",
+                "--name",
+                "John Doe",
+                "--token",
+                "abc123",
+            ],
+            input="mypassword\nmypassword\n",
+        )
+        assert result.exit_code == 0
+        assert "Invitation accepted" in result.output
+        assert "John Doe" in result.output
+
+    def test_accept_invite_with_password_option(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Accept invitation with password provided via option."""
+        httpx_mock.add_response(json={"success": True})
+
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-123",
+                "--name",
+                "Jane Doe",
+                "--password",
+                "secret123",
+                "--token",
+                "xyz789",
+            ],
+        )
+        assert result.exit_code == 0
+        assert "Invitation accepted" in result.output
+
+    def test_accept_invite_short_options(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Accept invitation with short options."""
+        httpx_mock.add_response(json={"success": True})
+
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-456",
+                "-n",
+                "Bob Smith",
+                "-p",
+                "password123",
+                "-t",
+                "tokenvalue",
+            ],
+        )
+        assert result.exit_code == 0
+        assert "Invitation accepted" in result.output
+
+    def test_accept_invite_sends_correct_data(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Accept invitation sends correct API parameters."""
+        httpx_mock.add_response(json={"success": True})
+
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-789",
+                "--name",
+                "Test User",
+                "--password",
+                "testpass",
+                "--token",
+                "invtoken",
+            ],
+        )
+        assert result.exit_code == 0
+
+        request = httpx_mock.get_request()
+        assert b"invitationId=inv-789" in request.content
+        assert b"name=Test+User" in request.content
+        assert b"password=testpass" in request.content
+        assert b"token=invtoken" in request.content
+
+    def test_accept_invite_no_auth_header(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Accept invitation does not send auth header."""
+        httpx_mock.add_response(json={"success": True})
+
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-123",
+                "--name",
+                "No Auth User",
+                "--password",
+                "noauth123",
+                "--token",
+                "noauthtoken",
+            ],
+        )
+        assert result.exit_code == 0
+
+        request = httpx_mock.get_request()
+        # Should not have Bearer token since we pass empty token
+        assert "Bearer test-token" not in request.headers.get("Authorization", "")
+
+    def test_accept_invite_missing_name(self, runner: CliRunner, mock_auth) -> None:
+        """Accept invitation requires --name option."""
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-123",
+                "--token",
+                "abc",
+            ],
+            input="pass\npass\n",
+        )
+        assert result.exit_code == 2
+        assert "Missing option" in result.output or "--name" in result.output
+
+    def test_accept_invite_missing_token(self, runner: CliRunner, mock_auth) -> None:
+        """Accept invitation requires --token option."""
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-123",
+                "--name",
+                "Test",
+                "--password",
+                "pass",
+            ],
+        )
+        assert result.exit_code == 2
+        assert "Missing option" in result.output or "--token" in result.output
+
+    def test_accept_invite_invalid_token(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Accept invitation handles invalid token error."""
+        httpx_mock.add_response(
+            status_code=400, json={"message": "Invalid invitation token"}
+        )
+
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-123",
+                "--name",
+                "Test",
+                "--password",
+                "pass",
+                "--token",
+                "invalid",
+            ],
+        )
+        assert result.exit_code == 1
+        assert "Invalid invitation token" in result.output
+
+    def test_accept_invite_not_found(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Accept invitation handles not found."""
+        httpx_mock.add_response(
+            status_code=404, json={"message": "Invitation not found"}
+        )
+
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "nonexistent",
+                "--name",
+                "Test",
+                "--password",
+                "pass",
+                "--token",
+                "tok",
+            ],
+        )
+        assert result.exit_code == 1
+        assert "Invitation not found" in result.output
+
+    def test_accept_invite_server_error(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Accept invitation handles server error."""
+        httpx_mock.add_response(status_code=500, json={"message": "Server error"})
+
+        result = runner.invoke(
+            cli,
+            [
+                "workspace",
+                "invites",
+                "accept",
+                "inv-123",
+                "--name",
+                "Test",
+                "--password",
+                "pass",
+                "--token",
+                "tok",
+            ],
+        )
+        assert result.exit_code == 1
