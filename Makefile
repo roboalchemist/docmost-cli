@@ -1,13 +1,15 @@
-.PHONY: test lint format install install-dev clean help
+.PHONY: test test-unit test-integration lint format install install-dev clean help
 
 help:
 	@echo "Available targets:"
-	@echo "  install      Install the package"
-	@echo "  install-dev  Install with development dependencies"
-	@echo "  test         Run tests"
-	@echo "  lint         Run linter (ruff)"
-	@echo "  format       Format code (ruff)"
-	@echo "  clean        Remove build artifacts"
+	@echo "  install           Install the package"
+	@echo "  install-dev       Install with development dependencies"
+	@echo "  test              Run all tests (unit + integration)"
+	@echo "  test-unit         Run unit tests only"
+	@echo "  test-integration  Run integration tests (requires live server)"
+	@echo "  lint              Run linter (ruff)"
+	@echo "  format            Format code (ruff)"
+	@echo "  clean             Remove build artifacts"
 
 install:
 	uv pip install --system -e .
@@ -17,6 +19,12 @@ install-dev:
 
 test:
 	pytest -v
+
+test-unit:
+	pytest -v --ignore=tests/test_integration.py
+
+test-integration:
+	pytest -v tests/test_integration.py
 
 lint:
 	ruff check src/

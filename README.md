@@ -395,6 +395,40 @@ docmost pages tree SPACE_ID --format json
 cat ~/.config/docmost/config.yaml
 ```
 
+## Development
+
+### Running Tests
+
+```bash
+# Run all tests (unit + integration)
+make test
+
+# Run unit tests only (no live server needed)
+make test-unit
+
+# Run integration tests (requires live server and authentication)
+make test-integration
+```
+
+### Integration Tests
+
+Integration tests run against a live Docmost server. They require:
+
+1. A configured Docmost URL (`~/.config/docmost/config.yaml` or `DOCMOST_URL`)
+2. Valid authentication (run `docmost login` or set `DOCMOST_TOKEN`)
+
+Integration tests only exercise read-only commands and will not modify any data.
+
+### Other Make Targets
+
+```bash
+make install      # Install the package
+make install-dev  # Install with development dependencies
+make lint         # Run ruff linter
+make format       # Format code with ruff
+make clean        # Remove build artifacts
+```
+
 ## License
 
 MIT
