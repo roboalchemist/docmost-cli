@@ -84,6 +84,30 @@ class TestDocmostClientHandleResponse:
         result = client._handle_response(response)
         assert result == {"id": "123", "name": "Test"}
 
+    def test_handle_response_unwraps_data_wrapper(self) -> None:
+        """Response with data/success/status wrapper gets unwrapped."""
+        client = DocmostClient(url="https://example.com/api", token="token")
+        response = httpx.Response(
+            200,
+            json={
+                "data": {"items": [{"id": "1"}, {"id": "2"}], "meta": {"page": 1}},
+                "success": True,
+                "status": 200,
+            },
+        )
+        result = client._handle_response(response)
+        # Should return inner data, not the wrapper
+        assert result == {"items": [{"id": "1"}, {"id": "2"}], "meta": {"page": 1}}
+        assert "success" not in result
+        assert "status" not in result
+
+    def test_handle_response_preserves_unwrapped_response(self) -> None:
+        """Response without data/success/status wrapper is returned as-is."""
+        client = DocmostClient(url="https://example.com/api", token="token")
+        response = httpx.Response(200, json={"items": [{"id": "1"}]})
+        result = client._handle_response(response)
+        assert result == {"items": [{"id": "1"}]}
+
     def test_handle_response_401_raises_authentication_error(self) -> None:
         """401 response raises AuthenticationError."""
         client = DocmostClient(url="https://example.com/api", token="token")

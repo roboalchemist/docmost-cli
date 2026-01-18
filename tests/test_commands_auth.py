@@ -192,6 +192,63 @@ class TestLoginCommand:
 
         assert result.exit_code == 0
 
+    def test_login_extracts_token_from_cookie(
+        self, runner: CliRunner, httpx_mock, tmp_path
+    ) -> None:
+        """Login extracts authToken from Set-Cookie header (live server behavior)."""
+        httpx_mock.add_response(
+            url="https://docs.example.com/api/auth/login",
+            json={"success": True, "status": 200},
+            headers={"Set-Cookie": "authToken=jwt-token-from-cookie; Path=/; HttpOnly"},
+        )
+
+        config_dir = tmp_path / ".config" / "docmost"
+        with patch("docmost.config.CONFIG_DIR", config_dir):
+            with patch("docmost.config.CONFIG_FILE", config_dir / "config.yaml"):
+                with patch("docmost.auth.get_config_dir", return_value=config_dir):
+                    config_dir.mkdir(parents=True, exist_ok=True)
+                    result = runner.invoke(
+                        cli,
+                        ["login", "-u", "https://docs.example.com", "-e", "u@e.com", "-p", "p"],
+                    )
+
+        assert result.exit_code == 0
+        assert "Logged in successfully" in result.output
+        # Verify token was saved
+        token_file = config_dir / "token"
+        assert token_file.exists()
+        assert token_file.read_text() == "jwt-token-from-cookie"
+
+    def test_login_extracts_token_from_nested_response(
+        self, runner: CliRunner, httpx_mock, tmp_path
+    ) -> None:
+        """Login extracts token from data.tokens.accessToken (Postman spec format)."""
+        httpx_mock.add_response(
+            url="https://docs.example.com/api/auth/login",
+            json={
+                "data": {
+                    "tokens": {
+                        "accessToken": "nested-jwt-token"
+                    }
+                },
+                "success": True,
+                "status": 200
+            },
+        )
+
+        config_dir = tmp_path / ".config" / "docmost"
+        with patch("docmost.config.CONFIG_DIR", config_dir):
+            with patch("docmost.config.CONFIG_FILE", config_dir / "config.yaml"):
+                with patch("docmost.auth.get_config_dir", return_value=config_dir):
+                    config_dir.mkdir(parents=True, exist_ok=True)
+                    result = runner.invoke(
+                        cli,
+                        ["login", "-u", "https://docs.example.com", "-e", "u@e.com", "-p", "p"],
+                    )
+
+        assert result.exit_code == 0
+        assert "Logged in successfully" in result.output
+
 
 class TestLogoutCommand:
     """Tests for the logout command."""
