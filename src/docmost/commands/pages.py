@@ -192,7 +192,7 @@ def recent_pages(ctx: click.Context, space_id: str | None, page: int, limit: int
     default="markdown",
     help="Export format",
 )
-@click.option("--output", "-o", type=click.Path(), help="Output file path")
+@click.option("--output", "-o", "output_path", type=click.Path(), help="Output file path")
 @click.pass_context
 def export_page(
     ctx: click.Context, page_id: str, export_format: str, output_path: str | None

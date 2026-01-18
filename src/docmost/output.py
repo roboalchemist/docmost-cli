@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.table import Table
 
 console = Console()
+error_console = Console(stderr=True)
 
 
 def format_json(data: Any) -> str:
@@ -97,7 +98,7 @@ def success(message: str) -> None:
 
 def error(message: str) -> None:
     """Print an error message."""
-    console.print(f"[red]✗[/red] {message}", err=True)
+    error_console.print(f"[red]✗[/red] {message}")
 
 
 def warning(message: str) -> None:
