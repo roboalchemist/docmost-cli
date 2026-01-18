@@ -233,3 +233,35 @@ def page_history(ctx: click.Context, page_id: str, page: int, limit: int) -> Non
     except DocmostError as e:
         error(str(e))
         raise SystemExit(1)
+
+
+@pages.command("breadcrumbs")
+@click.argument("page_id")
+@click.pass_context
+def page_breadcrumbs(ctx: click.Context, page_id: str) -> None:
+    """Get breadcrumb path for a page."""
+    try:
+        client = get_client(url=ctx.obj.url)
+        result = client.post("/pages/breadcrumbs", {"pageId": page_id})
+        breadcrumbs = result.get("items", result.get("breadcrumbs", result))
+        if isinstance(breadcrumbs, list):
+            output(breadcrumbs, ctx.obj.format, columns=["id", "title", "icon"])
+        else:
+            output(result, ctx.obj.format)
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)
+
+
+@pages.command("history-info")
+@click.argument("history_id")
+@click.pass_context
+def history_info(ctx: click.Context, history_id: str) -> None:
+    """Get details of a specific history entry."""
+    try:
+        client = get_client(url=ctx.obj.url)
+        result = client.post("/pages/history/info", {"historyId": history_id})
+        output(result, ctx.obj.format)
+    except DocmostError as e:
+        error(str(e))
+        raise SystemExit(1)

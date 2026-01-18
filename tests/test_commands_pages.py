@@ -367,3 +367,101 @@ class TestPagesHistoryCommand:
 
         result = runner.invoke(cli, ["pages", "history", "page-1"])
         assert result.exit_code == 0
+
+
+class TestPagesBreadcrumbsCommand:
+    """Tests for pages breadcrumbs command."""
+
+    def test_page_breadcrumbs(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
+        """Get breadcrumb path for a page."""
+        httpx_mock.add_response(
+            json={
+                "items": [
+                    {"id": "root-1", "title": "Root", "icon": "home"},
+                    {"id": "parent-1", "title": "Parent", "icon": "folder"},
+                    {"id": "page-1", "title": "Current Page", "icon": "file"},
+                ]
+            }
+        )
+
+        result = runner.invoke(cli, ["pages", "breadcrumbs", "page-1"])
+        assert result.exit_code == 0
+        assert "Root" in result.output
+        assert "Parent" in result.output
+        assert "Current Page" in result.output
+
+    def test_page_breadcrumbs_handles_breadcrumbs_key(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Breadcrumbs handles 'breadcrumbs' key in response."""
+        httpx_mock.add_response(
+            json={"breadcrumbs": [{"id": "p1", "title": "Root"}]}
+        )
+
+        result = runner.invoke(cli, ["pages", "breadcrumbs", "page-1"])
+        assert result.exit_code == 0
+        assert "Root" in result.output
+
+    def test_page_breadcrumbs_not_found(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Breadcrumbs handles page not found."""
+        httpx_mock.add_response(status_code=404, json={"message": "Page not found"})
+
+        result = runner.invoke(cli, ["pages", "breadcrumbs", "nonexistent"])
+        assert result.exit_code == 1
+        assert "Page not found" in result.output
+
+    def test_page_breadcrumbs_error(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Breadcrumbs handles API error."""
+        httpx_mock.add_response(status_code=500, json={"message": "Internal error"})
+
+        result = runner.invoke(cli, ["pages", "breadcrumbs", "page-1"])
+        assert result.exit_code == 1
+        assert "Internal error" in result.output
+
+
+class TestPagesHistoryInfoCommand:
+    """Tests for pages history-info command."""
+
+    def test_history_info(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
+        """Get details of a specific history entry."""
+        httpx_mock.add_response(
+            json={
+                "id": "hist-123",
+                "pageId": "page-1",
+                "version": 5,
+                "content": "# Content at version 5",
+                "createdAt": "2024-01-15T10:00:00Z",
+                "creatorId": "user-1",
+            }
+        )
+
+        result = runner.invoke(cli, ["pages", "history-info", "hist-123"])
+        assert result.exit_code == 0
+        assert "hist-123" in result.output
+        assert "version" in result.output.lower() or "5" in result.output
+
+    def test_history_info_not_found(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """History info handles not found."""
+        httpx_mock.add_response(
+            status_code=404, json={"message": "History entry not found"}
+        )
+
+        result = runner.invoke(cli, ["pages", "history-info", "nonexistent"])
+        assert result.exit_code == 1
+        assert "History entry not found" in result.output
+
+    def test_history_info_error(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """History info handles API error."""
+        httpx_mock.add_response(status_code=500, json={"message": "Server error"})
+
+        result = runner.invoke(cli, ["pages", "history-info", "hist-123"])
+        assert result.exit_code == 1
+        assert "Server error" in result.output
