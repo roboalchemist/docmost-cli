@@ -129,6 +129,10 @@ docmost spaces members-add SPACE_ID --user-ids "user-id" --role admin
 
 # Remove a member from a space
 docmost spaces members-remove SPACE_ID --user-id user-id
+
+# Change a member's role in a space
+docmost spaces members-change-role SPACE_ID --user-id user-id --role writer
+docmost spaces members-change-role SPACE_ID --group-id group-id --role admin
 ```
 
 ### Pages
@@ -172,6 +176,12 @@ docmost pages export PAGE_ID --format html --output /path/to/file.html
 # Get page revision history
 docmost pages history PAGE_ID
 docmost pages history PAGE_ID --page 1 --limit 20
+
+# Get breadcrumb path for a page
+docmost pages breadcrumbs PAGE_ID
+
+# Get details of a specific history entry
+docmost pages history-info HISTORY_ID
 ```
 
 ### Search
@@ -226,6 +236,9 @@ Manage workspace settings.
 # Get workspace information
 docmost workspace info
 
+# Get public workspace information
+docmost workspace public
+
 # Update workspace settings
 docmost workspace update --name "New Workspace Name"
 docmost workspace update --description "Workspace description"
@@ -234,11 +247,16 @@ docmost workspace update --logo "https://example.com/logo.png"
 # List workspace members
 docmost workspace members
 
+# Change a workspace member's role
+docmost workspace members-change-role USER_ID --role admin
+
 # Manage invitations
 docmost workspace invites list
 docmost workspace invites list --page 1 --limit 20
 docmost workspace invites create --emails "user1@example.com,user2@example.com" --role member
 docmost workspace invites revoke INVITATION_ID
+docmost workspace invites info INVITATION_ID
+docmost workspace invites resend INVITATION_ID
 ```
 
 ### Groups
@@ -281,6 +299,9 @@ Manage page comments.
 ```bash
 # List comments on a page
 docmost comments list PAGE_ID
+
+# Get comment information
+docmost comments info COMMENT_ID
 
 # Create a comment
 docmost comments create PAGE_ID --content "My comment"
