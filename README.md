@@ -13,7 +13,7 @@ pip install docmost-cli
 ### From source
 
 ```bash
-git clone https://gitea.roboalch.com/gateway/docmost-cli
+git clone https://github.com/roboalchemist/docmost-cli
 cd docmost-cli
 pip install -e .
 ```
@@ -21,7 +21,7 @@ pip install -e .
 ### Development install
 
 ```bash
-git clone https://gitea.roboalch.com/gateway/docmost-cli
+git clone https://github.com/roboalchemist/docmost-cli
 cd docmost-cli
 pip install -e ".[dev]"
 ```

@@ -41,8 +41,8 @@ dev = [
 docmost = "docmost.cli:cli"
 
 [project.urls]
-Homepage = "https://gitea.roboalch.com/gateway/docmost-cli"
-Repository = "https://gitea.roboalch.com/gateway/docmost-cli"
+Homepage = "https://github.com/roboalchemist/docmost-cli"
+Repository = "https://github.com/roboalchemist/docmost-cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/docmost"]
