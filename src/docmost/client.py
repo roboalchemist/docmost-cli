@@ -152,6 +152,41 @@ class DocmostClient:
             )
             return self._handle_response(response)
 
+    def upload_file(
+        self, endpoint: str, file_path: str, form_data: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """Upload a file to the API with multipart/form-data.
+
+        Args:
+            endpoint: API endpoint (e.g., "/pages/import")
+            file_path: Path to file to upload
+            form_data: Additional form fields to send
+
+        Returns:
+            API response as dictionary
+        """
+        import os
+
+        url = f"{self.url.rstrip('/')}{endpoint}"
+
+        # Auth header only (no Content-Type, httpx will set it for multipart)
+        headers = {}
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
+
+        with open(file_path, "rb") as f:
+            filename = os.path.basename(file_path)
+            files = {"file": (filename, f, "text/markdown")}
+
+            with httpx.Client(timeout=self.timeout) as client:
+                response = client.post(
+                    url,
+                    files=files,
+                    data=form_data or {},
+                    headers=headers,
+                )
+                return self._handle_response(response)
+
 
 def get_client(url: str | None = None, token: str | None = None) -> DocmostClient:
     """Get a configured Docmost client.
