@@ -236,6 +236,50 @@ class TestGetClient:
                 assert client.token == "default-token"
 
 
+class TestDocmostClientPostBinary:
+    """Tests for POST binary requests."""
+
+    def test_post_binary_returns_bytes(self, httpx_mock) -> None:
+        """POST binary returns raw bytes."""
+        httpx_mock.add_response(content=b"\x50\x4b\x03\x04binary content")
+        client = DocmostClient(url="https://example.com/api", token="token")
+        result = client.post_binary("/test", {"key": "value"})
+        assert result == b"\x50\x4b\x03\x04binary content"
+
+        request = httpx_mock.get_request()
+        assert request.url == "https://example.com/api/test"
+        assert request.method == "POST"
+        assert request.headers["Content-Type"] == "application/json"
+
+    def test_post_binary_handles_auth_error(self, httpx_mock) -> None:
+        """POST binary raises AuthenticationError on 401."""
+        httpx_mock.add_response(status_code=401)
+        client = DocmostClient(url="https://example.com/api", token="token")
+        with pytest.raises(AuthenticationError):
+            client.post_binary("/test", {})
+
+    def test_post_binary_handles_not_found(self, httpx_mock) -> None:
+        """POST binary raises NotFoundError on 404."""
+        httpx_mock.add_response(status_code=404)
+        client = DocmostClient(url="https://example.com/api", token="token")
+        with pytest.raises(NotFoundError):
+            client.post_binary("/test", {})
+
+    def test_post_binary_handles_validation_error(self, httpx_mock) -> None:
+        """POST binary raises ValidationError on 400."""
+        httpx_mock.add_response(status_code=400)
+        client = DocmostClient(url="https://example.com/api", token="token")
+        with pytest.raises(ValidationError):
+            client.post_binary("/test", {})
+
+    def test_post_binary_handles_server_error(self, httpx_mock) -> None:
+        """POST binary raises DocmostError on 500."""
+        httpx_mock.add_response(status_code=500)
+        client = DocmostClient(url="https://example.com/api", token="token")
+        with pytest.raises(DocmostError):
+            client.post_binary("/test", {})
+
+
 class TestDocmostErrorAttributes:
     """Tests for DocmostError exception attributes."""
 

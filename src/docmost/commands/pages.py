@@ -368,6 +368,29 @@ def recent_pages(ctx: click.Context, space_id: str | None, page: int, limit: int
         raise SystemExit(1)
 
 
+def extract_content_from_zip(zip_data: bytes) -> str:
+    """Extract markdown/HTML content from a ZIP file.
+
+    Args:
+        zip_data: Raw ZIP file bytes
+
+    Returns:
+        Extracted content as string
+    """
+    import io
+    import zipfile
+
+    with zipfile.ZipFile(io.BytesIO(zip_data), "r") as zf:
+        # Get the first file in the ZIP (should be the markdown/html export)
+        file_list = zf.namelist()
+        if not file_list:
+            raise DocmostError("Export ZIP file is empty")
+
+        # Read the first file (usually the exported content)
+        content_file = file_list[0]
+        return zf.read(content_file).decode("utf-8")
+
+
 @pages.command("export")
 @click.argument("page_id")
 @click.option(
@@ -386,9 +409,18 @@ def export_page(
     """Export a page to HTML or Markdown."""
     try:
         client = get_client(url=ctx.obj.url)
-        result = client.post("/pages/export", {"pageId": page_id, "format": export_format})
 
-        content = result.get("content", result.get("data", str(result)))
+        # The export endpoint returns a ZIP file, not JSON
+        raw_data = client.post_binary(
+            "/pages/export", {"pageId": page_id, "format": export_format}
+        )
+
+        # Check if response is a ZIP file (starts with PK signature)
+        if raw_data[:2] == b"PK":
+            content = extract_content_from_zip(raw_data)
+        else:
+            # Fallback: if it's plain text, decode it directly
+            content = raw_data.decode("utf-8")
 
         if output_path:
             with open(output_path, "w") as f:

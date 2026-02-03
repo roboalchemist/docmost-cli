@@ -323,11 +323,23 @@ class TestPagesRecentCommand:
 class TestPagesExportCommand:
     """Tests for pages export command."""
 
+    @staticmethod
+    def _create_zip_with_content(content: str, filename: str = "export.md") -> bytes:
+        """Create a ZIP file containing the given content."""
+        import io
+        import zipfile
+
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr(filename, content)
+        return zip_buffer.getvalue()
+
     def test_export_page_to_stdout(
         self, runner: CliRunner, httpx_mock, mock_auth
     ) -> None:
-        """Export page to stdout."""
-        httpx_mock.add_response(json={"content": "# My Page\n\nContent here"})
+        """Export page to stdout (ZIP response)."""
+        zip_content = self._create_zip_with_content("# My Page\n\nContent here")
+        httpx_mock.add_response(content=zip_content)
 
         result = runner.invoke(cli, ["pages", "export", "page-1"])
         assert result.exit_code == 0
@@ -336,8 +348,11 @@ class TestPagesExportCommand:
     def test_export_page_as_html(
         self, runner: CliRunner, httpx_mock, mock_auth
     ) -> None:
-        """Export page as HTML."""
-        httpx_mock.add_response(json={"content": "<h1>My Page</h1>"})
+        """Export page as HTML (ZIP response)."""
+        zip_content = self._create_zip_with_content(
+            "<h1>My Page</h1>", filename="export.html"
+        )
+        httpx_mock.add_response(content=zip_content)
 
         result = runner.invoke(cli, ["pages", "export", "page-1", "-f", "html"])
         assert result.exit_code == 0
@@ -346,8 +361,9 @@ class TestPagesExportCommand:
     def test_export_page_to_file(
         self, runner: CliRunner, httpx_mock, mock_auth, tmp_path
     ) -> None:
-        """Export page to file."""
-        httpx_mock.add_response(json={"content": "# Exported content"})
+        """Export page to file (ZIP response)."""
+        zip_content = self._create_zip_with_content("# Exported content")
+        httpx_mock.add_response(content=zip_content)
         output_file = tmp_path / "exported.md"
 
         result = runner.invoke(
@@ -357,15 +373,26 @@ class TestPagesExportCommand:
         assert "Exported to" in result.output
         assert output_file.read_text() == "# Exported content"
 
-    def test_export_page_handles_data_key(
+    def test_export_page_plain_text_fallback(
         self, runner: CliRunner, httpx_mock, mock_auth
     ) -> None:
-        """Export handles 'data' key in response."""
-        httpx_mock.add_response(json={"data": "Content from data key"})
+        """Export handles plain text response (non-ZIP fallback)."""
+        # If the API ever returns plain text instead of ZIP
+        httpx_mock.add_response(content=b"# Plain text content")
 
         result = runner.invoke(cli, ["pages", "export", "page-1"])
         assert result.exit_code == 0
-        assert "Content from data key" in result.output
+        assert "# Plain text content" in result.output
+
+    def test_export_page_not_found(
+        self, runner: CliRunner, httpx_mock, mock_auth
+    ) -> None:
+        """Export handles page not found error."""
+        httpx_mock.add_response(status_code=404)
+
+        result = runner.invoke(cli, ["pages", "export", "nonexistent"])
+        assert result.exit_code == 1
+        assert "not found" in result.output.lower()
 
 
 class TestPagesHistoryCommand:

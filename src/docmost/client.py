@@ -53,6 +53,47 @@ class DocmostClient:
         if not self.url:
             raise DocmostError("No API URL configured. Set DOCMOST_URL or run 'docmost login'.")
 
+    def _handle_binary_response(self, response: httpx.Response) -> bytes:
+        """Handle API response that returns binary data (e.g., ZIP files).
+
+        Args:
+            response: The HTTP response object
+
+        Returns:
+            Raw bytes from the response
+
+        Raises:
+            AuthenticationError: If authentication fails
+            NotFoundError: If resource not found
+            ValidationError: If request validation fails
+            DocmostError: For other API errors
+        """
+        if response.status_code == 401:
+            raise AuthenticationError(
+                "Authentication failed. Please run 'docmost login'.",
+                status_code=401,
+            )
+
+        if response.status_code == 404:
+            raise NotFoundError(
+                "Resource not found",
+                status_code=404,
+            )
+
+        if response.status_code == 400:
+            raise ValidationError(
+                "Validation error",
+                status_code=400,
+            )
+
+        if response.status_code >= 400:
+            raise DocmostError(
+                f"API error: {response.status_code}",
+                status_code=response.status_code,
+            )
+
+        return response.content
+
     def _get_headers(self) -> dict[str, str]:
         """Get request headers with authentication."""
         headers = {
@@ -151,6 +192,31 @@ class DocmostClient:
                 headers=headers,
             )
             return self._handle_response(response)
+
+    def post_binary(self, endpoint: str, data: dict[str, Any] | None = None) -> bytes:
+        """Make a POST request and return raw binary response.
+
+        Used for endpoints that return binary data like ZIP files.
+
+        Args:
+            endpoint: API endpoint (e.g., "/pages/export")
+            data: Request body data
+
+        Returns:
+            Raw bytes from the response
+        """
+        url = f"{self.url.rstrip('/')}{endpoint}"
+
+        headers = self._get_headers()
+        headers["Content-Type"] = "application/json"
+
+        with httpx.Client(timeout=self.timeout) as client:
+            response = client.post(
+                url,
+                json=data or {},
+                headers=headers,
+            )
+            return self._handle_binary_response(response)
 
     def upload_file(
         self, endpoint: str, file_path: str, form_data: dict[str, Any] | None = None
