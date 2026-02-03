@@ -39,8 +39,20 @@ class TestPagesCreateCommand:
     def test_create_page_with_content(
         self, runner: CliRunner, httpx_mock, mock_auth
     ) -> None:
-        """Create page with content."""
-        httpx_mock.add_response(json={"id": "page-1"})
+        """Create page with content uses import endpoint."""
+        # Mock the import endpoint response
+        httpx_mock.add_response(
+            json={
+                "data": {
+                    "id": "page-1",
+                    "title": "Test",
+                    "slugId": "test123",
+                    "spaceId": "space-1"
+                },
+                "success": True,
+                "status": 200
+            }
+        )
 
         result = runner.invoke(
             cli,
@@ -56,6 +68,7 @@ class TestPagesCreateCommand:
             ],
         )
         assert result.exit_code == 0
+        assert "created with content" in result.output
 
     def test_create_page_with_parent(
         self, runner: CliRunner, httpx_mock, mock_auth
@@ -127,13 +140,38 @@ class TestPagesUpdateCommand:
     def test_update_page_content(
         self, runner: CliRunner, httpx_mock, mock_auth
     ) -> None:
-        """Update page content."""
-        httpx_mock.add_response(json={"id": "page-1"})
+        """Update page content uses delete+import."""
+        # Mock page info response (needed to get spaceId)
+        httpx_mock.add_response(
+            json={
+                "id": "page-1",
+                "title": "Old Title",
+                "spaceId": "space-1",
+                "slugId": "old123"
+            }
+        )
+        # Mock delete response
+        httpx_mock.add_response(json={})
+        # Mock import response
+        httpx_mock.add_response(
+            json={
+                "data": {
+                    "id": "page-2",
+                    "title": "Updated content",
+                    "slugId": "new456",
+                    "spaceId": "space-1"
+                },
+                "success": True,
+                "status": 200
+            }
+        )
 
         result = runner.invoke(
-            cli, ["pages", "update", "page-1", "-c", "# Updated content"]
+            cli, ["pages", "update", "page-1", "-c", "# Updated content"],
+            input="y\n"  # Confirm the delete+import
         )
         assert result.exit_code == 0
+        assert "updated with new content" in result.output
 
     def test_update_page_icon(self, runner: CliRunner, httpx_mock, mock_auth) -> None:
         """Update page icon."""
